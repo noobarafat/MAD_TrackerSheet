@@ -9,46 +9,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  String displayText = "Hello World!";
-
-  void changeText() {
-    setState(() {
-      displayText = "Button Pressed";
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              displayText,
-              style: const TextStyle(fontSize: 24),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: changeText,
-              child: const Text("Press Me"),
-            ),
-          ],
+      home: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text("List View Items"),
+          backgroundColor: const Color.fromARGB(255, 11, 157, 197),
+        ),
+        body: ListView.builder(
+          itemCount: 10,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Center(
+                child: Text(
+                  "Item Number $index",
+                  selectionColor: Color.fromARGB(0, 16, 164, 36),
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
