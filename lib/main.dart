@@ -9,31 +9,46 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Hello World App',
-      home: const HelloWorldScreen(),
-      theme: ThemeData(
-        fontFamily: 'Lobster', // Use the custom font
-      ),
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: MyHomePage(),
     );
   }
 }
 
-class HelloWorldScreen extends StatelessWidget {
-  const HelloWorldScreen({super.key});
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  String displayText = "Hello World!";
+
+  void changeText() {
+    setState(() {
+      displayText = "Button Pressed";
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Colors.white,
+    return Scaffold(
       body: Center(
-        child: Text(
-          'Hello World!',
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: Colors.deepPurple, // Custom color
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              displayText,
+              style: const TextStyle(fontSize: 24),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: changeText,
+              child: const Text("Press Me"),
+            ),
+          ],
         ),
       ),
     );
