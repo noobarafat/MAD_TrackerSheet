@@ -10,39 +10,48 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Local Image App',
+      title: 'Styled Container',
       debugShowCheckedModeBanner: false,
-      home: const ImageScreen(),
+      home: const ContainerExample(),
     );
   }
 }
 
-class ImageScreen extends StatelessWidget {
-  const ImageScreen({super.key});
+class ContainerExample extends StatelessWidget {
+  const ContainerExample({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Text('Local Asset Image'),
-        backgroundColor: Colors.deepPurple,
+        title: const Text("Stylish Container"),
+        backgroundColor: Colors.teal,
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Here is a local image:',
-              style: TextStyle(fontSize: 20),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          margin: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.teal[200],
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                spreadRadius: 3,
+                blurRadius: 10,
+                offset: const Offset(4, 4),
+              ),
+            ],
+          ),
+          child: const Text(
+            "Welcome to Flutter!",
+            style: TextStyle(
+              fontSize: 24,
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
             ),
-            const SizedBox(height: 20),
-            Image.asset(
-              'assets/images/my_image.jpg',
-              width: 300,
-              height: 200,
-              fit: BoxFit.cover,
-            ),
-          ],
+          ),
         ),
       ),
     );
