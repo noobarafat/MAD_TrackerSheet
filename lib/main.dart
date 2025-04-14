@@ -1,103 +1,91 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(DateTimePickerApp());
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+class DateTimePickerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Swipe List Demo',
       debugShowCheckedModeBanner: false,
-      home: const SwipeListPage(),
+      title: 'Date & Time Picker',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: DateTimePickerScreen(),
     );
   }
 }
 
-class SwipeListPage extends StatefulWidget {
-  const SwipeListPage({super.key});
-
+class DateTimePickerScreen extends StatefulWidget {
   @override
-  State<SwipeListPage> createState() => _SwipeListPageState();
+  _DateTimePickerScreenState createState() => _DateTimePickerScreenState();
 }
 
-class _SwipeListPageState extends State<SwipeListPage> {
-  List<String> items = List.generate(10, (index) => 'Item ${index + 1}');
+class _DateTimePickerScreenState extends State<DateTimePickerScreen> {
+  DateTime? selectedDate;
+  TimeOfDay? selectedTime;
+
+  String get formattedDate => selectedDate != null
+      ? DateFormat.yMMMMd().format(selectedDate!)
+      : 'No date selected';
+
+  String get formattedTime => selectedTime != null
+      ? selectedTime!.format(context)
+      : 'No time selected';
+
+  Future<void> _pickDate() async {
+    final DateTime? date = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (date != null) {
+      setState(() {
+        selectedDate = date;
+      });
+    }
+  }
+
+  Future<void> _pickTime() async {
+    final TimeOfDay? time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (time != null) {
+      setState(() {
+        selectedTime = time;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Swipe to Edit/Delete"),
-        backgroundColor: Colors.teal,
+        title: Text('Date & Time Picker'),
       ),
-      body: ListView.builder(
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          final item = items[index];
-
-          return Dismissible(
-            key: Key(item),
-            background: swipeActionLeft(),
-            secondaryBackground: swipeActionRight(),
-            confirmDismiss: (direction) async {
-              if (direction == DismissDirection.endToStart) {
-                bool confirm = await _showConfirmationDialog(context, "Delete", item);
-                if (confirm) {
-                  setState(() {
-                    items.removeAt(index);
-                  });
-                }
-                return confirm;
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Edit tapped on $item")),
-                );
-                return false;
-              }
-            },
-            child: ListTile(
-              title: Text(item),
-              subtitle: const Text("Swipe to see options"),
-              leading: const Icon(Icons.label_outline),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: _pickDate,
+              child: Text('Pick Date'),
             ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget swipeActionLeft() {
-    return Container(
-      alignment: Alignment.centerLeft,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      color: Colors.blue,
-      child: const Icon(Icons.edit, color: Colors.white, size: 30),
-    );
-  }
-
-  Widget swipeActionRight() {
-    return Container(
-      alignment: Alignment.centerRight,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      color: Colors.red,
-      child: const Icon(Icons.delete, color: Colors.white, size: 30),
-    );
-  }
-
-  Future<bool> _showConfirmationDialog(BuildContext context, String action, String item) async {
-    return await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("$action Confirmation"),
-        content: Text("Are you sure you want to $action \"$item\"?"),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text("Cancel")),
-          TextButton(onPressed: () => Navigator.of(context).pop(true), child: const Text("Yes")),
-        ],
+            SizedBox(height: 10),
+            Text(formattedDate, style: TextStyle(fontSize: 18)),
+            SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: _pickTime,
+              child: Text('Pick Time'),
+            ),
+            SizedBox(height: 10),
+            Text(formattedTime, style: TextStyle(fontSize: 18)),
+          ],
+        ),
       ),
     );
   }
