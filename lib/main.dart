@@ -10,48 +10,56 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Styled Container',
+      title: 'Custom AppBar',
       debugShowCheckedModeBanner: false,
-      home: const ContainerExample(),
+      home: const HomeScreen(),
     );
   }
 }
 
-class ContainerExample extends StatelessWidget {
-  const ContainerExample({super.key});
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Text("Stylish Container"),
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.indigo[600],
+        elevation: 6,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Image.asset(
+            'assets/images/logo.png',
+            fit: BoxFit.contain,
+          ),
+        ),
+        title: const Text(
+          'MyApp Dashboard',
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 20,
+          ),
+        ),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.more_vert),
+            onPressed: () {
+              
+            },
+          ),
+        ],
       ),
-      body: Center(
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          margin: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.teal[200],
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                spreadRadius: 3,
-                blurRadius: 10,
-                offset: const Offset(4, 4),
-              ),
-            ],
-          ),
-          child: const Text(
-            "Welcome to Flutter!",
-            style: TextStyle(
-              fontSize: 24,
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+      body: const Center(
+        child: Text(
+          'Welcome to MyApp!',
+          style: TextStyle(fontSize: 22),
         ),
       ),
     );
