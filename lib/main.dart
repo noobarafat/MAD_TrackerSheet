@@ -1,91 +1,74 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'dart:math';
 
-void main() => runApp(DateTimePickerApp());
+void main() {
+  runApp(const AnimatedShapeApp());
+}
 
-class DateTimePickerApp extends StatelessWidget {
+class AnimatedShapeApp extends StatelessWidget {
+  const AnimatedShapeApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Animated Container Demo',
       debugShowCheckedModeBanner: false,
-      title: 'Date & Time Picker',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: DateTimePickerScreen(),
+      home: const AnimatedShapeScreen(),
     );
   }
 }
 
-class DateTimePickerScreen extends StatefulWidget {
+class AnimatedShapeScreen extends StatefulWidget {
+  const AnimatedShapeScreen({super.key});
+
   @override
-  _DateTimePickerScreenState createState() => _DateTimePickerScreenState();
+  State<AnimatedShapeScreen> createState() => _AnimatedShapeScreenState();
 }
 
-class _DateTimePickerScreenState extends State<DateTimePickerScreen> {
-  DateTime? selectedDate;
-  TimeOfDay? selectedTime;
+class _AnimatedShapeScreenState extends State<AnimatedShapeScreen> {
+  double _width = 150;
+  double _height = 150;
+  Color _color = Colors.blue;
+  BorderRadiusGeometry _borderRadius = BorderRadius.circular(20);
 
-  String get formattedDate => selectedDate != null
-      ? DateFormat.yMMMMd().format(selectedDate!)
-      : 'No date selected';
-
-  String get formattedTime => selectedTime != null
-      ? selectedTime!.format(context)
-      : 'No time selected';
-
-  Future<void> _pickDate() async {
-    final DateTime? date = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (date != null) {
-      setState(() {
-        selectedDate = date;
-      });
-    }
-  }
-
-  Future<void> _pickTime() async {
-    final TimeOfDay? time = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-    if (time != null) {
-      setState(() {
-        selectedTime = time;
-      });
-    }
+  void _changeShape() {
+    setState(() {
+      final random = Random();
+      _width = random.nextInt(200).toDouble() + 100;
+      _height = random.nextInt(200).toDouble() + 100;
+      _color = Color.fromRGBO(
+        random.nextInt(256),
+        random.nextInt(256),
+        random.nextInt(256),
+        1,
+      );
+      _borderRadius = BorderRadius.circular(random.nextInt(100).toDouble());
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Date & Time Picker'),
+        title: const Text('Animated Container Example'),
+        backgroundColor: Colors.deepPurple,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: _pickDate,
-              child: Text('Pick Date'),
-            ),
-            SizedBox(height: 10),
-            Text(formattedDate, style: TextStyle(fontSize: 18)),
-            SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: _pickTime,
-              child: Text('Pick Time'),
-            ),
-            SizedBox(height: 10),
-            Text(formattedTime, style: TextStyle(fontSize: 18)),
-          ],
+      body: Center(
+        child: AnimatedContainer(
+          width: _width,
+          height: _height,
+          decoration: BoxDecoration(
+            color: _color,
+            borderRadius: _borderRadius,
+          ),
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.easeInOut,
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _changeShape,
+        backgroundColor: Colors.deepPurple,
+        child: const Icon(Icons.play_arrow),
       ),
     );
   }
