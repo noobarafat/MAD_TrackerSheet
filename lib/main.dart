@@ -1,74 +1,123 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
-
-  @override
-  State<ProfilePage> createState() => _ProfilePageState();
+void main() {
+  runApp(const MyApp());
 }
 
-class _ProfilePageState extends State<ProfilePage> {
-  File? _image;
-  final ImagePicker _picker = ImagePicker();
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: CustomDrawerApp(),
+    );
+  }
+}
 
-  Future<void> _pickImage() async {
-    final XFile? pickedImage =
-        await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedImage != null) {
-      setState(() {
-        _image = File(pickedImage.path);
-      });
-    }
+class CustomDrawerApp extends StatefulWidget {
+  const CustomDrawerApp({super.key});
+
+  @override
+  State<CustomDrawerApp> createState() => _CustomDrawerAppState();
+}
+
+class _CustomDrawerAppState extends State<CustomDrawerApp>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Offset> _slideAnimation;
+  bool isDrawerOpen = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller =
+        AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(-1.0, 0.0),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  void toggleDrawer() {
+    setState(() {
+      isDrawerOpen = !isDrawerOpen;
+      if (isDrawerOpen) {
+        _controller.forward();
+      } else {
+        _controller.reverse();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Widget buildDrawer() {
+    return SlideTransition(
+      position: _slideAnimation,
+      child: Container(
+        width: 250,
+        color: Colors.deepPurple.shade100,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const DrawerHeader(
+              child: Text(
+                "Menu",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text("Home"),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text("Profile"),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text("Settings"),
+              onTap: () {},
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Profile"),
+        title: const Text("Custom Animated Drawer"),
         backgroundColor: Colors.deepPurple,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Stack(
-              children: [
-                CircleAvatar(
-                  radius: 70,
-                  backgroundColor: Colors.grey[300],
-                  backgroundImage: _image != null ? FileImage(_image!) : null,
-                  child: _image == null
-                      ? const Icon(Icons.person, size: 70, color: Colors.white)
-                      : null,
-                ),
-                Positioned(
-                  bottom: 0,
-                  right: 4,
-                  child: InkWell(
-                    onTap: _pickImage,
-                    child: const CircleAvatar(
-                      radius: 20,
-                      backgroundColor: Colors.deepPurple,
-                      child: Icon(Icons.edit, color: Colors.white),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              "K. M. Arafat Islam",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-            ),
-            const Text(
-              "ID: 221-15-5498",
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-          ],
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: toggleDrawer,
         ),
+      ),
+      body: Stack(
+        children: [
+          // Main content
+          const Center(
+            child: Text(
+              "Main Content Area",
+              style: TextStyle(fontSize: 22),
+            ),
+          ),
+
+          // Animated Drawer
+          buildDrawer(),
+        ],
       ),
     );
   }
