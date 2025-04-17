@@ -1,65 +1,74 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _MyAppState extends State<MyApp> {
-  bool isDarkMode = false;
+class _ProfilePageState extends State<ProfilePage> {
+  File? _image;
+  final ImagePicker _picker = ImagePicker();
 
-  void toggleDarkMode(bool value) {
-    setState(() {
-      isDarkMode = value;
-    });
+  Future<void> _pickImage() async {
+    final XFile? pickedImage =
+        await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      setState(() {
+        _image = File(pickedImage.path);
+      });
+    }
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Settings Example',
-      debugShowCheckedModeBanner: false,
-      theme: isDarkMode ? ThemeData.dark() : ThemeData.light(),
-      home: SettingsScreen(
-        isDarkMode: isDarkMode,
-        onToggle: toggleDarkMode,
-      ),
-    );
-  }
-}
-
-class SettingsScreen extends StatelessWidget {
-  final bool isDarkMode;
-  final Function(bool) onToggle;
-
-  const SettingsScreen({
-    super.key,
-    required this.isDarkMode,
-    required this.onToggle,
-  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Settings"),
+        title: const Text("Profile"),
         backgroundColor: Colors.deepPurple,
       ),
-      body: ListView(
-        children: [
-          SwitchListTile(
-            title: const Text("Dark Mode"),
-            value: isDarkMode,
-            activeColor: Colors.deepPurple,
-            onChanged: onToggle,
-          ),
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Stack(
+              children: [
+                CircleAvatar(
+                  radius: 70,
+                  backgroundColor: Colors.grey[300],
+                  backgroundImage: _image != null ? FileImage(_image!) : null,
+                  child: _image == null
+                      ? const Icon(Icons.person, size: 70, color: Colors.white)
+                      : null,
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 4,
+                  child: InkWell(
+                    onTap: _pickImage,
+                    child: const CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.deepPurple,
+                      child: Icon(Icons.edit, color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              "K. M. Arafat Islam",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
+            const Text(
+              "ID: 221-15-5498",
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+          ],
+        ),
       ),
     );
   }
